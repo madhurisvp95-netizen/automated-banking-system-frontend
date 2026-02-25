@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8085';
 
 /**
  * Create an axios instance with default configuration
@@ -11,8 +11,6 @@ const apiClient = axios.create({
     'Content-Type': 'application/json',
   },
 });
-src/services/authService.js
-
 /**
  * Add token to headers if it exists in localStorage
  */
@@ -42,8 +40,8 @@ const authService = {
   login: async (username, password) => {
     try {
       const response = await apiClient.post('/api/auth/login', {
-        username,
-        password,
+        customerName: username,
+        password: password,
       });
       
       // Store the token if provided in response

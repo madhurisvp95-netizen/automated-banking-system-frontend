@@ -89,13 +89,9 @@ function LoginPage() {
         formData.username,
         formData.password
       );
-
-      setSuccessMessage('Login successful! Redirecting...');
+    alert("Login Successful");
+    navigate("/dashboard"); 
       
-      // Redirect to dashboard or home page after successful login
-      setTimeout(() => {
-        navigate('/dashboard');
-      }, 1500);
     } catch (error) {
       setGeneralError(error.message || 'Login failed. Please try again.');
     } finally {

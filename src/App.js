@@ -38,16 +38,9 @@ function App() {
       <Routes>
         {/* Login Route */}
         <Route path="/login" element={<LoginPage />} />
-
-        {/* Protected Routes */}
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <DashboardPage />
-            </ProtectedRoute>
-          }
-        />
+        <Route path="/dashboard" element={<Navigate to="/dashboard/deposit" replace />} />
+        <Route path="/dashboard/:tab" element={<DashboardPage />} />
+      
 
         {/* Default route - redirect to login or dashboard */}
         <Route
