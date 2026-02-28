@@ -1,0 +1,75 @@
+.welcome-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: linear-gradient(130deg, #0f172a 0%, #1e3a8a 45%, #0ea5e9 100%);
+}
+
+.welcome-card {
+  width: 100%;
+  max-width: 460px;
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 2rem;
+  text-align: center;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.25);
+}
+
+.welcome-card h1 {
+  margin: 0 0 0.75rem;
+  font-size: 1.75rem;
+  color: #0f172a;
+}
+
+.welcome-card p {
+  margin: 0 0 1.75rem;
+  color: #475569;
+}
+
+.role-buttons {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.role-button {
+  display: block;
+  text-decoration: none;
+  font-weight: 600;
+  padding: 0.9rem 1rem;
+  border-radius: 8px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.role-button:hover {
+  transform: translateY(-2px);
+}
+
+.admin-role {
+  background: #0f172a;
+  color: #f8fafc;
+}
+
+.admin-role:hover {
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.3);
+}
+
+.user-role {
+  background: #0ea5e9;
+  color: #f8fafc;
+}
+
+.user-role:hover {
+  box-shadow: 0 8px 24px rgba(14, 165, 233, 0.35);
+}
+
+@media (max-width: 480px) {
+  .welcome-card {
+    padding: 1.5rem;
+  }
+
+  .welcome-card h1 {
+    font-size: 1.5rem;
+  }
+}

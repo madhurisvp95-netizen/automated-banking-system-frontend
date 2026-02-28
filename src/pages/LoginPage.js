@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import authService from '../services/authService';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import authService from '../utils/services/authService';
 import './LoginPage.css';
 
 /**
@@ -9,10 +9,13 @@ import './LoginPage.css';
  */
 function LoginPage() {
   const navigate = useNavigate();
+  const { role = 'user' } = useParams();
+  const normalizedRole = role.toLowerCase() === 'admin' ? 'admin' : 'user';
+  const roleLabel = normalizedRole === 'admin' ? 'Admin' : 'User';
   
   // Form state
   const [formData, setFormData] = useState({
-    username: '',
+    customerId: '',
     password: '',
   });
   
@@ -29,13 +32,13 @@ function LoginPage() {
   const validateForm = () => {
     const newErrors = {};
 
-    // Validate username
-    if (!formData.username.trim()) {
-      newErrors.username = 'Username is required';
-    } else if (formData.username.trim().length < 3) {
-      newErrors.username = 'Username must be at least 3 characters';
-    } else if (!/^[a-zA-Z0-9_-]+$/.test(formData.username)) {
-      newErrors.username = 'Username can only contain letters, numbers, dashes, and underscores';
+    // Validate customer ID
+    if (!formData.customerId.trim()) {
+      newErrors.customerId = 'Customer ID is required';
+    } else if (formData.customerId.trim().length < 3) {
+      newErrors.customerId = 'Customer ID must be at least 3 characters';
+    } else if (!/^[a-zA-Z0-9_-]+$/.test(formData.customerId)) {
+      newErrors.customerId = 'Customer ID can only contain letters, numbers, dashes, and underscores';
     }
 
     // Validate password
@@ -85,12 +88,13 @@ function LoginPage() {
 
     try {
       // Call the login API
-      const response = await authService.login(
-        formData.username,
-        formData.password
+      await authService.login(
+        formData.customerId,
+        formData.password,
+        normalizedRole
       );
-    alert("Login Successful");
-    navigate("/dashboard"); 
+      alert("Login Successful");
+      navigate("/dashboard");
       
     } catch (error) {
       setGeneralError(error.message || 'Login failed. Please try again.');
@@ -110,8 +114,8 @@ function LoginPage() {
     <div className="login-container">
       <div className="login-card">
         <div className="login-header">
-          <h1>Banking System</h1>
-          <p>Secure Login Portal</p>
+          <h1>{roleLabel} Login</h1>
+          <p>Secure Banking Portal</p>
         </div>
 
         <form onSubmit={handleSubmit} className="login-form">
@@ -129,22 +133,22 @@ function LoginPage() {
             </div>
           )}
 
-          {/* Username Field */}
+          {/* Customer ID Field */}
           <div className="form-group">
-            <label htmlFor="username">Username</label>
+            <label htmlFor="customerId">Customer ID</label>
             <input
               type="text"
-              id="username"
-              name="username"
-              value={formData.username}
+              id="customerId"
+              name="customerId"
+              value={formData.customerId}
               onChange={handleInputChange}
-              placeholder="Enter your username"
+              placeholder="Enter your customer ID"
               disabled={isLoading}
-              className={errors.username ? 'input-error' : ''}
+              className={errors.customerId ? 'input-error' : ''}
               autoComplete="username"
             />
-            {errors.username && (
-              <span className="error-message">{errors.username}</span>
+            {errors.customerId && (
+              <span className="error-message">{errors.customerId}</span>
             )}
           </div>
 
@@ -179,6 +183,14 @@ function LoginPage() {
 
         {/* Additional Links */}
         <div className="login-footer">
+          <Link
+            className="link-button role-switch"
+            to={normalizedRole === 'admin' ? '/login/user' : '/login/admin'}
+          >
+            {normalizedRole === 'admin'
+              ? 'Sign in as User'
+              : 'Sign in as Admin'}
+          </Link>
           <button
             type="button"
             className="link-button"

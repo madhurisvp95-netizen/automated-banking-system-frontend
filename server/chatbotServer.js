@@ -15,26 +15,39 @@ function getBotReply(rawMessage) {
   }
 
   if (message.includes('deposit')) {
-    return 'To deposit money, open the Deposit section in Transaction Module, enter account number and amount, then submit.';
+    return 'To deposit money, open Transactions > Deposit, enter amount, and submit.';
   }
 
   if (message.includes('withdraw')) {
-    return 'For withdrawal, use the Withdrawal section, provide account number and amount, then confirm.';
+    return 'For withdrawal, open Transactions > Withdrawal, enter amount, and submit.';
   }
 
   if (message.includes('transfer')) {
-    return 'For transfer, enter source account, destination account, and amount in the Transfer section.';
+    return 'For transfer, open Transactions > Transfer, enter destination account number and amount, then submit.';
   }
 
   if (message.includes('bill')) {
-    return 'For bill payment, open Bill Payment in Transaction Module and complete account plus amount details.';
+    return 'Bill payment is not available in the current application.';
+  }
+
+  if (message.includes('ticket') || message.includes('support')) {
+    return 'Open Customer Support > Create Ticket, add subject and issue details, then create the ticket.';
+  }
+
+  if (
+    message.includes('balance') ||
+    message.includes('account') ||
+    message.includes('address') ||
+    message.includes('phone')
+  ) {
+    return 'Your dashboard profile card shows account number, address, phone number, and current balance.';
   }
 
   if (message.includes('hello') || message.includes('hi')) {
-    return 'Hello! Ask me about deposits, withdrawals, transfers, or bill payments.';
+    return 'Hello! Ask me about deposits, withdrawals, transfers, profile details, or support tickets.';
   }
 
-  return 'I can help with deposit, withdrawal, transfer, and bill payment questions.';
+  return 'I can help with transactions, profile details, and support tickets.';
 }
 
 app.get('/api/chatbot/health', (req, res) => {
