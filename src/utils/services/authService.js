@@ -4,6 +4,8 @@ const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8085';
 const ADMIN_LOGIN_ENDPOINT = process.env.REACT_APP_ADMIN_LOGIN_ENDPOINT;
 const USER_LOGIN_ENDPOINT = process.env.REACT_APP_USER_LOGIN_ENDPOINT;
 const DEFAULT_LOGIN_ENDPOINT = process.env.REACT_APP_LOGIN_ENDPOINT || '/api/auth/login';
+const RESET_PASSWORD_ENDPOINT = process.env.REACT_APP_RESET_PASSWORD_ENDPOINT;
+const CREATE_USER_ENDPOINT = process.env.REACT_APP_CREATE_USER_ENDPOINT;
 const USER_PROFILE_ENDPOINT = process.env.REACT_APP_USER_PROFILE_ENDPOINT || '/api/banking/me';
 const USER_BALANCE_ENDPOINT = process.env.REACT_APP_USER_BALANCE_ENDPOINT || '/api/banking/me';
 
@@ -50,6 +52,13 @@ const buildLoginEndpoints = (role) => {
 
 const getLoginPayloadVariants = (customerId, password) => [
   { customerId, password },
+];
+const getResetPasswordPayloadVariants = (customerId, newPassword) => [
+  { customerId, newPassword },
+  { customerId, password: newPassword },
+];
+const getCreateUserPayloadVariants = ({ username, phoneNumber, address, password }) => [
+  { username, phoneNumber, address, password },
 ];
 
 const isAuthStatus = (status) => status === 401 || status === 403;
@@ -278,6 +287,81 @@ const authService = {
       endpointsTried: endpoints,
     });
     throw new Error(lastError?.response?.data?.message || 'Login failed');
+  },
+
+  /**
+   * Reset user password
+   * @param {string} customerId - User's customer ID
+   * @param {string} newPassword - New password
+   * @returns {Promise} - Promise containing the API response
+   */
+  resetPassword: async (customerId, newPassword) => {
+    const endpoints = [
+      RESET_PASSWORD_ENDPOINT,
+      '/api/auth/reset-password',
+      '/api/user/change-password',
+    ].filter(Boolean);
+    const payloadVariants = getResetPasswordPayloadVariants(customerId, newPassword);
+    let lastError = null;
+
+    for (const endpoint of endpoints) {
+      for (const payload of payloadVariants) {
+        try {
+          const response = await apiClient.post(endpoint, payload);
+          return response.data;
+        } catch (error) {
+          lastError = error;
+          if (isAuthStatus(error.response?.status)) {
+            throw new Error(error.response?.data?.message || 'Password reset failed');
+          }
+        }
+      }
+    }
+
+    throw new Error(lastError?.response?.data?.message || 'Unable to reset password');
+  },
+
+  /**
+   * Create a new user
+   * @param {Object} userDetails - New user details
+   * @param {string} userDetails.username - New user's username
+   * @param {string} userDetails.phoneNumber - New user's phone number
+   * @param {string} userDetails.address - New user's address
+   * @param {string} userDetails.password - New user's password
+   * @returns {Promise} - Promise containing the API response
+   */
+  createUser: async (userDetails) => {
+    const { username, phoneNumber, address, password } = userDetails || {};
+    const endpoints = [
+      CREATE_USER_ENDPOINT,
+      '/api/login/registerUser',
+      '/api/auth/register',
+      '/api/user/register',
+      '/api/users',
+    ].filter(Boolean);
+    const payloadVariants = getCreateUserPayloadVariants({
+      username,
+      phoneNumber,
+      address,
+      password,
+    });
+    let lastError = null;
+
+    for (const endpoint of endpoints) {
+      for (const payload of payloadVariants) {
+        try {
+          const response = await apiClient.post(endpoint, payload);
+          return response.data;
+        } catch (error) {
+          lastError = error;
+          if (isAuthStatus(error.response?.status)) {
+            throw new Error(error.response?.data?.message || 'User creation failed');
+          }
+        }
+      }
+    }
+
+    throw new Error(lastError?.response?.data?.message || 'Unable to create user');
   },
 
   /**

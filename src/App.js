@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import CreateUserPage from './pages/CreateUserPage';
 import DashboardPage from './pages/DashboardPage';
 import WelcomePage from './pages/WelcomePage';
 import authService from './utils/services/authService';
@@ -46,13 +48,15 @@ function App() {
         {/* Role-based Login Routes */}
         <Route path="/login" element={<Navigate to="/login/user" replace />} />
         <Route path="/login/:role" element={<LoginPage />} />
+        <Route path="/create-user" element={<CreateUserPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
         {/* Protected Dashboard Routes */}
         <Route
           path="/dashboard"
           element={
             <ProtectedRoute>
-              <Navigate to="/dashboard/deposit" replace />
+              <DashboardPage />
             </ProtectedRoute>
           }
         />

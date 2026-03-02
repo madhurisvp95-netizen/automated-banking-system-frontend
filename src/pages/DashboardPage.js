@@ -14,10 +14,7 @@ function DashboardPage() {
   const [amount, setAmount] = useState("");
   const [toAccountId, setToAccountId] = useState("");
   const [currentUser, setCurrentUser] = useState(null);
-  const [activeView, setActiveView] = useState("deposit");
-  const [ticketSubject, setTicketSubject] = useState("");
-  const [ticketDescription, setTicketDescription] = useState("");
-  const [tickets, setTickets] = useState([]);
+  const [activeView, setActiveView] = useState("");
   const [historyItems, setHistoryItems] = useState([]);
   const [isHistoryLoading, setIsHistoryLoading] = useState(false);
   const [historyError, setHistoryError] = useState("");
@@ -55,9 +52,14 @@ function DashboardPage() {
   }, [isUserRole]);
 
   useEffect(() => {
-    if (!tab || !VALID_TRANSACTION_TABS.includes(tab)) {
-      navigate("/dashboard/deposit", { replace: true });
-      setActiveView("deposit");
+    if (!tab) {
+      setActiveView("");
+      return;
+    }
+
+    if (!VALID_TRANSACTION_TABS.includes(tab)) {
+      navigate("/dashboard", { replace: true });
+      setActiveView("");
       return;
     }
 
@@ -226,24 +228,9 @@ function DashboardPage() {
     localStorage.setItem("user", JSON.stringify(updatedUser));
   };
 
-  const handleCreateTicket = (e) => {
-    e.preventDefault();
-    if (!ticketSubject.trim() || !ticketDescription.trim()) {
-      alert("Please enter ticket subject and description");
-      return;
-    }
-
-    const newTicket = {
-      id: Date.now(),
-      subject: ticketSubject.trim(),
-      description: ticketDescription.trim(),
-      status: "Open",
-    };
-
-    setTickets((prev) => [newTicket, ...prev]);
-    setTicketSubject("");
-    setTicketDescription("");
-    alert("Ticket created successfully");
+  const handleLogout = () => {
+    authService.logout();
+    navigate("/login/user", { replace: true });
   };
 
   const renderTransactionContent = () => {
@@ -357,50 +344,18 @@ function DashboardPage() {
       );
     }
 
-    if (activeView === "ticket") {
-      return (
-        <div className="content-card">
-          <h3>Create Ticket</h3>
-          <form onSubmit={handleCreateTicket} className="ticket-form">
-            <input
-              type="text"
-              placeholder="Ticket Subject"
-              value={ticketSubject}
-              onChange={(e) => setTicketSubject(e.target.value)}
-            />
-            <textarea
-              placeholder="Describe your issue"
-              value={ticketDescription}
-              onChange={(e) => setTicketDescription(e.target.value)}
-              rows={4}
-            />
-            <button type="submit">Create Ticket</button>
-          </form>
-
-          {tickets.length > 0 && (
-            <div className="ticket-list">
-              {tickets.map((ticket) => (
-                <div key={ticket.id} className="ticket-item">
-                  <p><strong>{ticket.subject}</strong></p>
-                  <p>{ticket.description}</p>
-                  <span className="ticket-status">{ticket.status}</span>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      );
-    }
-
     return null;
   };
 
-  const isSupportView = activeView === "chat" || activeView === "ticket";
+  const isSupportView = activeView === "chat";
 
   return (
     <div className="dashboard-layout">
       <aside className="dashboard-sidebar">
         <h2>Dashboard</h2>
+        <button type="button" className="logout-button" onClick={handleLogout}>
+          Logout
+        </button>
 
         <div className="menu-group">
           <button type="button" className="menu-title">Transactions</button>
@@ -445,13 +400,6 @@ function DashboardPage() {
               onClick={() => selectSupportView("chat")}
             >
               Chat With User
-            </button>
-            <button
-              type="button"
-              className={activeView === "ticket" ? "active" : ""}
-              onClick={() => selectSupportView("ticket")}
-            >
-              Create Ticket
             </button>
           </div>
         </div>

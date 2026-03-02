@@ -7,7 +7,7 @@ function CustomerServiceChat() {
   const [messages, setMessages] = useState([
     {
       role: "bot",
-      text: "Hello! I can help with deposits, withdrawals, transfers, and bill payments.",
+      text: "Hello! I can help with deposits, withdrawals, transfers",
     },
   ]);
   const [input, setInput] = useState("");

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import authService from '../utils/services/authService';
 import './LoginPage.css';
 
@@ -110,6 +110,13 @@ function LoginPage() {
     navigate('/forgot-password');
   };
 
+  /**
+   * Handle create new user
+   */
+  const handleCreateUser = () => {
+    navigate('/create-user');
+  };
+
   return (
     <div className="login-container">
       <div className="login-card">
@@ -183,14 +190,14 @@ function LoginPage() {
 
         {/* Additional Links */}
         <div className="login-footer">
-          <Link
-            className="link-button role-switch"
-            to={normalizedRole === 'admin' ? '/login/user' : '/login/admin'}
+          <button
+            type="button"
+            className="link-button"
+            onClick={handleCreateUser}
+            disabled={isLoading}
           >
-            {normalizedRole === 'admin'
-              ? 'Sign in as User'
-              : 'Sign in as Admin'}
-          </Link>
+            Create New User
+          </button>
           <button
             type="button"
             className="link-button"
